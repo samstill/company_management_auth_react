@@ -4,8 +4,8 @@ const rolesConfig = {
         allowedRoutes: ['/admin', '/employee', '/customer'],
         dashboardComponent: 'AdminDashboard',
     },
-    employe: {
-        allowedRoutes: ['/employee', 'customer'],
+    employee: {
+        allowedRoutes: ['/employee', '/customer'],
         dashboardComponent: 'EmployeeDashboard',
     },
     customer: {

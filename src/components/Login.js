@@ -2,6 +2,10 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AuthContext from '../context/AuthContext';
+import './styles/Login.css';
+import { ReactComponent as Logo } from '../assets/logo.svg'; 
+import { FaEnvelope, FaLock } from 'react-icons/fa';
+import ThemeSwitcher from './ThemeSwitcher';
 
 const Login = () => {
     const [email, setEmail] = useState('');
@@ -34,28 +38,46 @@ const Login = () => {
     };
 
     return (
-        <div>
-            <h2>Login</h2>
-            {error && <p style={{ color: 'red' }}>{error}</p>}
-            <form onSubmit={handleSubmit}>
-                <input
-                    type="text"
-                    placeholder="Email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                />
-                <input
-                    type="password"
-                    placeholder="Password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                />
-                <button type="submit" disabled={loading}>
-                    {loading ? 'Logging in...' : 'Login'}
-                </button>
-            </form>
+        <div className="login-container">
+            
+            <div className="login-card">
+            <ThemeSwitcher style={{
+                position: 'absolute',
+                top: 0,
+                right: 0,
+                margin: '1rem',
+            }} />
+                <Logo className="login-logo" /> {/* Render SVG logo */}
+                <h2 className="login-title">Welcome Back</h2>
+                {error && <p className="login-error">{error}</p>}
+                <form onSubmit={handleSubmit} className="login-form">
+                    <div className="login-input-wrapper">
+                    <FaEnvelope className="login-icon" />
+                        <input
+                            type="email"
+                            placeholder="Email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            required
+                            className="login-input"
+                        />
+                    </div>
+                    <div className="login-input-wrapper">
+                        <FaLock className="login-icon" />
+                        <input
+                            type="password"
+                            placeholder="Password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            required
+                            className="login-input"
+                        />
+                    </div>
+                    <button type="submit" disabled={loading} className="login-button">
+                        {loading ? 'Signing in...' : 'Sign in'}
+                    </button>
+                </form>
+            </div>
         </div>
     );
 };
