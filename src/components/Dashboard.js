@@ -1,8 +1,10 @@
+// src/components/Dashboard.js
+
 import React, { lazy, Suspense, useMemo } from 'react';
-import {useAuth} from '@harshitpadha/auth'; // Ensure correct import path
+import { useAuth } from '@harshitpadha/auth';
 import rolesConfig from '../config/roles';
 
-// Import dashboard components statically
+// Import dashboard components lazily
 const AdminDashboard = lazy(() => import('./AdminDashboard'));
 const EmployeeDashboard = lazy(() => import('./EmployeeDashboard'));
 const CustomerDashboard = lazy(() => import('./CustomerDashboard'));
