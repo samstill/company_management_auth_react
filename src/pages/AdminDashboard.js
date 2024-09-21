@@ -1,23 +1,34 @@
 // src/components/AdminDashboard.js
 import React from 'react';
-import ThemeSwitcher from './ThemeSwitcher';
+import { useState } from 'react';
+import { Navbar } from '@harshitpadha/themes';
+
+
+
+
+
 
 const AdminDashboard = () => {
-    return (
-        <div>
-       
-            <ThemeSwitcher style={{
-                position: 'absolute',
-                top: 0,
-                right: 0,
-                margin: '1rem',
-            }} />
-            <h2>Admin Dashboard</h2>
 
-            
-            <p>Welcome, Admin!</p>
-        </div>
-    );
+      const customUtilityIcons = [
+       
+    
+       
+      ];
+
+      const customLogo = { content: 'Admin Dashboard', href: '/' };
+
+return (
+    <div>
+        <Navbar
+        logo={customLogo}
+        utilityIcons={customUtilityIcons}
+
+      />
+    <h2>Admin Dashboard</h2>
+    <p>Welcome, Customer!</p>
+</div>
+) 
 };
 
 export default AdminDashboard;
