@@ -1,18 +1,18 @@
-// src/config/roles.js
 const rolesConfig = {
     admin: {
-        allowedRoutes: ['/admin', '/employee', '/customer'],
-        dashboardComponent: 'AdminDashboard',
+      allowedRoutes: ['/admin', '/employee', '/customer'],
+      dashboardComponent: 'AdminDashboard', // Subfolder example
     },
     employee: {
-        allowedRoutes: ['/employee', '/customer'],
-        dashboardComponent: 'EmployeeDashboard',
+      allowedRoutes: ['/employee', '/customer'],
+      dashboardComponent: 'EmployeeDashboard', // Subfolder example
     },
     customer: {
-        allowedRoutes: ['/customer'],
-        dashboardComponent: 'CustomerDashboard',
+      allowedRoutes: ['/customer'],
+      dashboardComponent: 'CustomerDashboard', // Subfolder example
     },
-    // Add new roles here as needed
-};
 
-export default rolesConfig;
+  };
+  
+  export default rolesConfig;
+  

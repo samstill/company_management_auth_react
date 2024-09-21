@@ -13,6 +13,8 @@ const AdminDashboard = () => {
                 margin: '1rem',
             }} />
             <h2>Admin Dashboard</h2>
+
+            
             <p>Welcome, Admin!</p>
         </div>
     );
