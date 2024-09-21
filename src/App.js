@@ -1,12 +1,13 @@
 // src/App.js
 
 import React from 'react';
-import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { AuthProvider } from '@harshitpadha/auth';
-import Login from './components/Login';
-import Dashboard from './components/Dashboard';
+import Login from './pages/Login';
+import Dashboard from './pages/Dashboard';
 import { RequireAuth } from '@harshitpadha/auth';
 import { RequireNoAuth } from '@harshitpadha/auth';
+import NotFound from './pages/NotFound';
 
 function App() {
   return (
@@ -29,7 +30,7 @@ function App() {
               </RequireAuth>
             }
           />
-          <Route path="*" element={<Navigate to="/login" />} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </Router>
     </AuthProvider>

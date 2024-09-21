@@ -1,0 +1,9 @@
+/* src/components/Login.css */
+
+.login-container {
+    display: flex;
+    justify-content: right;
+    align-items: center;
+    min-height: 100vh;
+    background-color: var(--background-color);
+}
