@@ -1,0 +1,113 @@
+/* src/components/Login.css */
+
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: var(--background-color);
+    padding: 20px; /* Add padding for small screens */
+    box-sizing: border-box;
+}
+
+.login-card {
+    background-color: var(--background-color);
+    padding: 2rem;
+    border-radius: 12px; /* Rounded corners */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Soft shadow */
+    max-width: 360px;
+    width: 100%;
+    text-align: center;
+}
+
+.login-logo {
+    max-width: 100px;
+    margin-bottom: 1.5rem;
+}
+
+.login-title {
+    margin-bottom: 1.5rem;
+    font-size: 1.25rem;
+    font-weight: 500;
+    color: var(--text-color);
+}
+
+.login-error {
+    color: #e74c3c; /* Error message in red */
+    margin-bottom: 1rem;
+}
+
+.login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem; /* Add gap between form elements */
+}
+
+.login-input {
+    width: 100%;
+    padding: 12px 12px 12px 40px;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-size: 16px;
+    background-color: var(--input-background);
+    color: var(--input-text-color);
+    border: 1px solid var(--text-color);
+}
+
+.login-input:focus {
+    border-color: #1a73e8; /* Blue border on focus */
+    outline: none;
+}
+
+.login-button {
+    width: 100%;
+    padding: 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    background-color: var(--button-background);
+    color: var(--button-text-color);
+    border: none;
+}
+
+.login-button:hover {
+    background-color: var(--button-hover-background);
+}
+.login-button:disabled {
+    background-color: #bdc3c7; /* Gray when disabled */
+    cursor: not-allowed;
+}
+
+
+/* Login.css */
+
+/* Wrapper for input and icon */
+.login-input-wrapper {
+    position: relative;
+    margin-bottom: 20px; /* Adjust the spacing as needed */
+}
+
+/* Icon inside input */
+.login-icon {
+    position: absolute;
+    left: 10px; /* Adjust this value to control the padding */
+    top: 50%;
+    transform: translateY(-50%);
+    color: #888; /* Icon color */
+    pointer-events: none; /* Prevent clicking the icon */
+}
+
+/* Input field */
+.login-input {
+    width: 100%;
+    padding: 10px 10px 10px 35px; /* Add padding to the left to make space for the icon */
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+/* Add some focus effect */
+.login-input:focus {
+    border-color: #007bff;
+    outline: none;
+}

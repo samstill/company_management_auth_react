@@ -1,0 +1,43 @@
+<svg width="120" height="120" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    /* Arrow Growth Animation */
+    @keyframes arrow-grow {
+      0% { stroke-dasharray: 0, 100; }
+      100% { stroke-dasharray: 100, 0; }
+    }
+
+    /* Globe Spin Animation */
+    @keyframes globe-spin {
+      0% { transform: rotate(0deg); transform-origin: 60px 80px; }
+      100% { transform: rotate(360deg); transform-origin: 60px 80px; }
+    }
+
+    /* Apply Animations */
+    .arrow-path {
+      stroke-dasharray: 100, 0;
+      animation: arrow-grow 2s ease-in-out forwards;
+    }
+
+    .globe {
+      animation: globe-spin 5s infinite linear;
+    }
+  </style>
+
+  <!-- Outer Rounded Border -->
+  <rect x="5" y="5" width="110" height="110" rx="25" ry="25" fill="white" stroke="#00274D" stroke-width="3"/>
+
+  <!-- Modernized, Stylized Arrow (Integrated into Globe) -->
+  <path d="M40 70 Q60 50, 80 70" stroke="#D4AF37" stroke-width="4" fill="none" stroke-linecap="round" class="arrow-path"/>
+  <path d="M60 55 L60 30" stroke="#D4AF37" stroke-width="4" fill="none" stroke-linecap="round" class="arrow-path"/>
+  <circle cx="60" cy="30" r="3" fill="#D4AF37" class="arrow-path"/>
+
+  <!-- Refined Globe Design with Spin Animation -->
+  <g class="globe">
+    <circle cx="60" cy="80" r="15" stroke="#00274D" stroke-width="2" fill="none"/>
+    <path d="M60 65 A15 15 0 0 1 60 95" stroke="#00274D" stroke-width="2" fill="none" stroke-linecap="round"/>
+    <path d="M45 80 A15 15 0 0 0 75 80" stroke="#00274D" stroke-width="2" fill="none" stroke-linecap="round"/>
+    <path d="M53 68 A12 12 0 0 1 67 92" stroke="#00274D" stroke-width="1" fill="none" stroke-dasharray="4,2"/>
+  </g>
+
+ 
+</svg>
