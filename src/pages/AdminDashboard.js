@@ -26,7 +26,7 @@ return (
 
       />
     <h2>Admin Dashboard</h2>
-    <p>Welcome, Customer!</p>
+    <p>Welcome, Admin!</p>
 </div>
 ) 
 };
