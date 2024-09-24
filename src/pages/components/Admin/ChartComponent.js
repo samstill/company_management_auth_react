@@ -5,8 +5,11 @@ import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 const ChartComponent = ({ data }) => {
+  // Ensure data is an array, if not, provide an empty array as a fallback
+  const safeData = Array.isArray(data) ? data : [];
+
   // Count users based on their roles
-  const roleCounts = data.reduce((acc, user) => {
+  const roleCounts = safeData.reduce((acc, user) => {
     acc[user.role] = (acc[user.role] || 0) + 1;
     return acc;
   }, {});

@@ -1,8 +1,20 @@
 // src/pages/components/Admin/Users.js
 
-import React, { useEffect, useState } from 'react';
-import { fetchUsers, createUser, deleteUsers, fetchUsersSearch } from '../../../../api/admin';
-import { Button, Card, CardContent, Grid, DataTable, Modal } from '@harshitpadha/themes';
+import React, { useEffect, useState, useRef } from 'react';
+import {
+  fetchUsers,
+  createUser,
+  deleteUsers,
+  fetchUsersSearch,
+} from '../../../../api/admin';
+import {
+  Button,
+  Card,
+  CardContent,
+  Grid,
+  DataTable,
+  Modal,
+} from '@harshitpadha/themes';
 import styled from 'styled-components';
 import ChartComponent from '../ChartComponent';
 import AddUserForm from './AddUserForm';
@@ -27,32 +39,81 @@ const ModalContent = styled.div`
   margin: auto;
 `;
 
+const ChartCard = styled(Card)`
+  max-width: 400px;
+  margin-bottom: 20px;
+`;
+
+const ChartHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;
+
+const ChartTitle = styled.h3`
+  font-size: ${(props) => props.theme.typography.h3};
+  color: ${(props) => props.theme.colors.primary};
+  margin: 0;
+`;
+
+const UserCount = styled.span`
+  font-size: ${(props) => props.theme.typography.h3};
+  color: ${(props) => props.theme.colors.primary};
+`;
+
+const ChartContainer = styled.div`
+  margin-top: 10px;
+`;
+
 const Users = () => {
   const [users, setUsers] = useState([]); // Users data
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true); // For initial data fetch
+  const [tableLoading, setTableLoading] = useState(false); // For table data loading when searching
   const [error, setError] = useState(null);
   const [openAddUserModal, setOpenAddUserModal] = useState(false);
   const [selectedUserIds, setSelectedUserIds] = useState([]);
-  const [userCount, setUserCount] = useState(0); 
+  const [userCount, setUserCount] = useState(0);
   const [searchQuery, setSearchQuery] = useState(''); // Search query
 
-  useEffect(() => {
-    fetchUserData();
-  }, [searchQuery]); // Re-fetch data when searchQuery changes
+  const isInitialMount = useRef(true); // To track if it's the component's first render
 
-  const fetchUserData = async () => {
-    try {
-      setLoading(true);
-      const userResponse = await fetchUsersSearch(searchQuery);
-      if (userResponse.data) {
-        setUsers(userResponse.data);
+  // Fetch data on component mount and when searchQuery changes
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        if (isInitialMount.current) {
+          // Component is mounting
+          setLoading(true);
+        } else {
+          // Search query changed
+          setTableLoading(true);
+        }
+
+        let userResponse;
+        if (searchQuery.trim() === '') {
+          userResponse = await fetchUsers();
+        } else {
+          userResponse = await fetchUsersSearch(searchQuery);
+        }
+
+        if (userResponse.data) {
+          setUsers(userResponse.data);
+          setUserCount(userResponse.data.length);
+        }
+      } catch (err) {
+        setError('Failed to fetch users or data');
+      } finally {
+        if (isInitialMount.current) {
+          setLoading(false);
+          isInitialMount.current = false; // Set to false after the initial mount
+        } else {
+          setTableLoading(false);
+        }
       }
-    } catch (err) {
-      setError('Failed to fetch users or data');
-    } finally {
-      setLoading(false);
-    }
-  };
+    };
+
+    fetchData();
+  }, [searchQuery]);
 
   const handleAddNewUser = () => {
     setOpenAddUserModal(true);
@@ -66,7 +127,8 @@ const Users = () => {
     try {
       const response = await createUser(newUser);
       if (response.data) {
-        setUsers([...users, response.data]);
+        setUsers((prevUsers) => [...prevUsers, response.data]);
+        setUserCount((prevCount) => prevCount + 1); // Update user count
         setOpenAddUserModal(false);
       }
     } catch (err) {
@@ -80,18 +142,19 @@ const Users = () => {
       alert('No users selected');
       return;
     }
-  
-    console.log('User IDs to delete:', selectedUserIds); // Debugging line
-  
+
     if (window.confirm('Are you sure you want to delete the selected users?')) {
       try {
-        await deleteUsers(selectedUserIds); // Ensure selectedUserIds is an array of valid user IDs
+        await deleteUsers(selectedUserIds);
         // Remove deleted users from the state
-        setUsers(users.filter((user) => !selectedUserIds.includes(user.id)));
+        setUsers((prevUsers) =>
+          prevUsers.filter((user) => !selectedUserIds.includes(user.id))
+        );
         setSelectedUserIds([]); // Reset selection
-        setUserCount(userCount - selectedUserIds.length); // Update user count
+        setUserCount((prevCount) => prevCount - selectedUserIds.length); // Update user count
       } catch (err) {
         console.error('Failed to delete users', err);
+        setError('Failed to delete users');
       }
     }
   };
@@ -123,15 +186,19 @@ const Users = () => {
   return (
     <div>
       <Title>Admin Dashboard - Users Overview</Title>
-      <Grid>
-        {/* Pie Chart Section */}
-        <Card>
-          <CardContent>
-            <h2>User Role Distribution</h2>
+
+      {/* Chart Card */}
+      <ChartCard>
+        <CardContent>
+          <ChartHeader>
+            <ChartTitle>Users</ChartTitle>
+            <UserCount>{userCount}</UserCount>
+          </ChartHeader>
+          <ChartContainer>
             <ChartComponent data={users} />
-          </CardContent>
-        </Card>
-      </Grid>
+          </ChartContainer>
+        </CardContent>
+      </ChartCard>
 
       {/* User List Section */}
       <div style={{ marginTop: '30px' }}>
@@ -146,7 +213,8 @@ const Users = () => {
           columns={columns}
           data={users}
           onSelectionChange={handleSelectionChange}
-          onSearch={handleSearch} // Pass the handleSearch function
+          onSearch={handleSearch}
+          loading={tableLoading} // Pass the tableLoading state to DataTable
         />
       </div>
 
@@ -155,7 +223,10 @@ const Users = () => {
         <Modal open={openAddUserModal} onClose={handleAddUserModalClose}>
           <ModalContent>
             <h2>Add New User</h2>
-            <AddUserForm onAddUser={handleAddUser} onCancel={handleAddUserModalClose} />
+            <AddUserForm
+              onAddUser={handleAddUser}
+              onCancel={handleAddUserModalClose}
+            />
           </ModalContent>
         </Modal>
       )}

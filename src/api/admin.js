@@ -17,6 +17,7 @@ export const fetchUsersSearch = (searchQuery = '') =>
 export const fetchEmployees = () => axiosInstance.get('employee/employees/');
 export const fetchEmployeeCount = () => axiosInstance.get('employee/employees/count/');
 export const fetchEmployeeTrends = () => axiosInstance.get('employee/employees/trends/');
+export const fetchEmployeePerformance = (employeeId) => axiosInstance.get(`employee/employees/${employeeId}/performances/`);
 
 // Company-related API calls
 export const fetchCompanies = () => axiosInstance.get('company/companies/');
