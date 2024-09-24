@@ -7,12 +7,8 @@ import Dashboard from './pages/Dashboard';
 import { RequireAuth } from '@harshitpadha/auth';
 import { RequireNoAuth } from '@harshitpadha/auth';
 import NotFound from './pages/NotFound';
-import AdminDashboard from './pages/components/Admin/AdminDashboard';
-import { RequireRole } from '@harshitpadha/auth';
 import AdminRoutes from './pages/components/Admin/AdminRoutes';
-import Users from './pages/components/Admin/Users';
-import Employees from './pages/components/Admin/Employees';
-import Companies from './pages/components/Admin/Companies';
+import { RequireRole } from '@harshitpadha/auth';
 import './chart';
 
 
@@ -43,16 +39,11 @@ function App() {
             element={
               <RequireAuth>
                 <RequireRole role="admin">
-                  <AdminDashboard />
-                  
+                  <AdminRoutes /> {/* All admin routes will be here */}
                 </RequireRole>
-
               </RequireAuth>
             }>
-    
-        <Route path="users" element={<Users />} />
-        <Route path="employees" element={<Employees />} />
-        <Route path="companies" element={<Companies />} />
+
       </Route>
 
             <Route path="*" element={<NotFound />} />

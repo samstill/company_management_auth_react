@@ -1,15 +1,14 @@
+// src/index.js
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
-import { ThemeProvider } from 'styled-components';
-import { GlobalStyles, lightTheme, darkTheme } from '@harshitpadha/themes';
+import { ThemeProvider } from '@harshitpadha/themes'; // Import the custom ThemeProvider
+import './index.css';
 
-const theme = lightTheme;
-
+// Render the application and wrap it with ThemeProvider
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <ThemeProvider theme={theme}>
-      <GlobalStyles />
+    <ThemeProvider >
       <App />
     </ThemeProvider>
   </React.StrictMode>
