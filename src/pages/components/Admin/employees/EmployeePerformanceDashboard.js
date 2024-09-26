@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { fetchEmployeePerformance } from '../../../../api/admin';
 import { Card, CardContent, Grid } from '@harshitpadha/themes';
-import ChartComponent from '../ChartComponent';
+import PieChartComponent from './PieChartComponent';
 import styled from 'styled-components';
 
 const Title = styled.h2`
@@ -53,7 +53,7 @@ const EmployeePerformanceDashboard = ({ employeeId }) => {
         <Card>
           <CardContent>
             <h3>Employee Performance Overview</h3>
-            <ChartComponent data={chartData} />
+            <PieChartComponent data={chartData} />
           </CardContent>
         </Card>
       </Grid>

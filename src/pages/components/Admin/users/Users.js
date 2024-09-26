@@ -1,5 +1,3 @@
-// src/pages/components/Admin/Users.js
-
 import React, { useEffect, useState, useRef } from 'react';
 import {
   fetchUsers,
@@ -11,14 +9,15 @@ import {
   Button,
   Card,
   CardContent,
-  Grid,
   DataTable,
   Modal,
 } from '@harshitpadha/themes';
 import styled from 'styled-components';
-import ChartComponent from '../ChartComponent';
+import ChartComponent from './ChartComponent';
 import AddUserForm from './AddUserForm';
+import DefaultAvatar from '../../../../assets/default_avatar.png'; // Adjust the path accordingly
 
+// Styled components
 const Title = styled.h2`
   font-size: ${(props) => props.theme.typography.h2};
   color: ${(props) => props.theme.colors.primary};
@@ -28,7 +27,8 @@ const Title = styled.h2`
 const ActionButtonWrapper = styled.div`
   display: flex;
   justify-content: space-between;
-  margin-bottom: 10px;
+  align-items: center;
+  margin-bottom: 20px;
 `;
 
 const ModalContent = styled.div`
@@ -65,13 +65,31 @@ const ChartContainer = styled.div`
   margin-top: 10px;
 `;
 
+const AvatarImage = styled.img`
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+`;
+
+const UserAvatar = ({ user }) => (
+  <AvatarImage
+    src={user?.profile_photo || DefaultAvatar}
+    alt={`${user?.first_name || 'User'} ${user?.last_name || ''}`}
+    onError={(e) => {
+      e.target.onerror = null; // Prevents infinite loop if DefaultAvatar fails
+      e.target.src = DefaultAvatar;
+    }}
+  />
+);
+
 const Users = () => {
   const [users, setUsers] = useState([]); // Users data
   const [loading, setLoading] = useState(true); // For initial data fetch
   const [tableLoading, setTableLoading] = useState(false); // For table data loading when searching
   const [error, setError] = useState(null);
   const [openAddUserModal, setOpenAddUserModal] = useState(false);
-  const [selectedUserIds, setSelectedUserIds] = useState([]);
+  const [selectedUserIds, setSelectedUserIds] = useState([]); // Selected users for deletion
   const [userCount, setUserCount] = useState(0);
   const [searchQuery, setSearchQuery] = useState(''); // Search query
 
@@ -82,10 +100,8 @@ const Users = () => {
     const fetchData = async () => {
       try {
         if (isInitialMount.current) {
-          // Component is mounting
           setLoading(true);
         } else {
-          // Search query changed
           setTableLoading(true);
         }
 
@@ -97,8 +113,9 @@ const Users = () => {
         }
 
         if (userResponse.data) {
-          setUsers(userResponse.data);
-          setUserCount(userResponse.data.length);
+          const validUsers = userResponse.data.filter((user) => user != null);
+          setUsers(validUsers);
+          setUserCount(validUsers.length);
         }
       } catch (err) {
         setError('Failed to fetch users or data');
@@ -132,11 +149,11 @@ const Users = () => {
         setOpenAddUserModal(false);
       }
     } catch (err) {
-      console.error('Failed to add user', err);
       setError('Failed to add user');
     }
   };
 
+  // Updated delete function to reset checkboxes
   const handleDeleteUsers = async () => {
     if (selectedUserIds.length === 0) {
       alert('No users selected');
@@ -146,21 +163,19 @@ const Users = () => {
     if (window.confirm('Are you sure you want to delete the selected users?')) {
       try {
         await deleteUsers(selectedUserIds);
-        // Remove deleted users from the state
         setUsers((prevUsers) =>
           prevUsers.filter((user) => !selectedUserIds.includes(user.id))
         );
-        setSelectedUserIds([]); // Reset selection
+        setSelectedUserIds([]); // Reset the selectedUserIds to clear checkboxes
         setUserCount((prevCount) => prevCount - selectedUserIds.length); // Update user count
       } catch (err) {
-        console.error('Failed to delete users', err);
         setError('Failed to delete users');
       }
     }
   };
 
   const handleSelectionChange = (selectedIds) => {
-    setSelectedUserIds(selectedIds);
+    setSelectedUserIds(selectedIds); // Update selected user IDs
   };
 
   const handleSearch = (query) => {
@@ -175,8 +190,12 @@ const Users = () => {
     return <div>{error}</div>;
   }
 
-  // Define columns for DataTable
   const columns = [
+    {
+      key: 'profile_photo',
+      label: 'Avatar',
+      render: (value, user) => <UserAvatar user={user} />,
+    },
     { key: 'first_name', label: 'First Name' },
     { key: 'last_name', label: 'Last Name' },
     { key: 'email', label: 'Email' },
@@ -206,15 +225,18 @@ const Users = () => {
         <ActionButtonWrapper>
           <Button onClick={handleAddNewUser}>Add New</Button>
           {selectedUserIds.length > 0 && (
-            <Button onClick={handleDeleteUsers}>Delete Selected</Button>
+            <Button onClick={handleDeleteUsers} style={{ marginLeft: 'auto' }}>
+              Delete Selected
+            </Button>
           )}
         </ActionButtonWrapper>
         <DataTable
           columns={columns}
           data={users}
           onSelectionChange={handleSelectionChange}
+          selectedRowIds={selectedUserIds} // Ensure DataTable accepts this prop
           onSearch={handleSearch}
-          loading={tableLoading} // Pass the tableLoading state to DataTable
+          loading={tableLoading}
         />
       </div>
 
