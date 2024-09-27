@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { fetchEmployees } from '../../../../api/admin';
-import { Card, CardContent, DataTable } from '@harshitpadha/themes';
+import { Card, CardContent, DataTable, Grid } from '@harshitpadha/themes';
 import { useNavigate } from 'react-router-dom';
 import styled, { useTheme } from 'styled-components';
 import { FaStar, FaStarHalfAlt, FaRegStar } from 'react-icons/fa';
@@ -9,43 +9,7 @@ import LineChartComponent from './LineChartComponent';
 import DefaultAvatar from '../../../../assets/default_avatar.png';
 
 // Styled components
-const Title = styled.h2`
-  font-size: ${(props) => props.theme.typography.h2};
-  color: ${(props) => props.theme.colors.primary};
-  margin-bottom: 20px;
-`;
 
-const ChartContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-
-  @media (min-width: 768px) {
-    flex-direction: row;
-  }
-`;
-
-const PieChartCard = styled(Card)`
-  flex: 1;
-  height: 400px;
-  margin-bottom: 20px;
-
-  @media (min-width: 768px) {
-    flex: 1;
-  }
-`;
-
-const LineChartCard = styled(Card)`
-  flex: 3;
-  height: 400px;
-  margin-bottom: 20px;
-`;
-
-const ChartHeader = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-`;
 
 const ChartTitle = styled.h3`
   font-size: ${(props) => props.theme.typography.h3};
@@ -67,14 +31,42 @@ const AvatarImage = styled.img`
 
 const EmployeeAvatar = ({ user }) => (
   <AvatarImage
-    src={user?.profile_photo || DefaultAvatar} // Fallback to default avatar
-    alt={`${user?.first_name || 'User'} ${user?.last_name || ''}`} // Fallback to 'User' if names are not present
+    src={user?.profile_photo || DefaultAvatar} 
+    alt={`${user?.first_name || 'User'} ${user?.last_name || ''}`}
     onError={(e) => {
-      e.target.onerror = null; // Prevents infinite loop if DefaultAvatar fails
+      e.target.onerror = null;
       e.target.src = DefaultAvatar;
     }}
   />
 );
+
+const ChartHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+`;
+
+const LineChartCard = styled(Card)`
+  flex: 1;
+  height: 400px; // Ensure that the card height is fixed
+  display: flex;
+  flex-direction: column;
+`;
+
+const PieChartCard = styled(Card)`
+  flex: 1;
+  height: 400px;
+  display: flex;
+  flex-direction: column;
+`;
+
+const ChartContent = styled(CardContent)`
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+`;
 
 const renderStars = (rating, theme) => {
   const maxRating = 5;
@@ -166,34 +158,34 @@ const Employees = () => {
     {
       key: 'performance_rating',
       label: 'Performance Rating',
-      render: (value) => renderStars(value, theme),
+      render: (value) => value ? renderStars(value, theme) : 'N/A',
     },
   ];
 
   return (
     <div>
-      <Title>Employee Dashboard</Title>
 
-      <ChartContainer>
-        <PieChartCard>
-          <CardContent>
+
+      <Grid columns={4} gap="20px" padding="0">
+        <PieChartCard style={{ gridColumn: 'span 1' }}>
+          <ChartContent>
             <ChartHeader>
               <ChartTitle>Company Distribution</ChartTitle>
               <EmployeeCount>{employeeCount}</EmployeeCount>
             </ChartHeader>
             <PieChartComponent data={filteredEmployees} />
-          </CardContent>
+          </ChartContent>
         </PieChartCard>
 
-        <LineChartCard>
-          <CardContent>
+        <LineChartCard style={{ gridColumn: 'span 3' }}>
+          <ChartContent>
             <ChartHeader>
               <ChartTitle>Employee Performance Ratings</ChartTitle>
             </ChartHeader>
             <LineChartComponent data={filteredEmployees} />
-          </CardContent>
+          </ChartContent>
         </LineChartCard>
-      </ChartContainer>
+      </Grid>
 
       <div style={{ marginTop: '30px' }}>
         <h2>Employees</h2>
@@ -203,7 +195,7 @@ const Employees = () => {
           onSearch={handleSearch}
           loading={loading}
           onRowClick={handleRowClick}
-          checkboxRow={false} // Disable checkbox column
+          checkboxRow={false} 
         />
       </div>
     </div>

@@ -1,16 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { Sidebar } from '@harshitpadha/themes'; // Import the Sidebar component
+import { Sidebar, Navbar } from '@harshitpadha/themes'; // Import Sidebar and Navbar components
 import { FaHome, FaUser, FaBuilding, FaChartLine } from 'react-icons/fa'; // Import icons
-import { MdSettings } from 'react-icons/md'; // Import Material Design settings icon
-import { Outlet } from 'react-router-dom'; // To render child components
+import { FiLogOut, FiEdit } from 'react-icons/fi'; // Icons for logout and edit
+import { Outlet, useNavigate, useLocation } from 'react-router-dom'; // To render child components and navigate
 import styled from 'styled-components';
 import { useTheme } from '@harshitpadha/themes'; // Import useTheme hook
+import DefaultAvatar from '../../../assets/default_avatar.png'; // Fallback avatar image
+import { fetchLoggedInUser } from '../../../api/admin'; // Import the API call to get current user info
 
 // Styled components for layout
 const DashboardContainer = styled.div`
   display: flex;
   min-height: 100vh;
-  overflow: hidden; /* Prevent overflow */
 `;
 
 const FixedSidebar = styled.div`
@@ -18,18 +19,31 @@ const FixedSidebar = styled.div`
   left: 0;
   top: 0;
   height: 100%;
+  width: ${({ isCollapsed }) => (isCollapsed ? '80px' : '250px')};
   z-index: 1000;
-  overflow: hidden; /* Prevent sidebar from scrolling */
   background-color: ${({ theme }) => theme.colors.background};
+  transition: width 0.4s ease-in-out;
 `;
 
 const Content = styled.div`
   flex: 1;
-  padding: 20px;
-  margin-left: ${({ isCollapsed }) => (isCollapsed ? '80px' : '250px')}; /* Dynamic margin to prevent hiding */
-  transition: margin-left 0.4s ease-in-out; /* Smooth transition for margin change */
-  overflow-y: auto; /* Enable scrolling for the content area */
+  margin-left: ${({ isCollapsed }) => (isCollapsed ? '80px' : '250px')};
+  transition: margin-left 0.4s ease-in-out;
+  overflow-y: auto; /* Ensure content can still scroll */
   height: 100vh;
+  position: relative;
+
+  /* Hide scrollbar for WebKit-based browsers (Chrome, Safari) */
+  ::-webkit-scrollbar {
+    display: none; /* Hide the scrollbar */
+  }
+
+  /* Hide scrollbar for Firefox */
+  scrollbar-width: none; /* Hide the scrollbar */
+`;
+
+const ContentWrapper = styled.div`
+  padding: 50px 20px 20px 20px; /* padding: top, right, bottom, left */
 `;
 
 const AdminDashboard = () => {
@@ -38,10 +52,33 @@ const AdminDashboard = () => {
     const savedState = localStorage.getItem('sidebar-collapsed');
     return savedState === 'true'; // Convert string to boolean
   });
+  const [user, setUser] = useState(null); // State to store the logged-in user data
+  const navigate = useNavigate(); // Hook for navigation
+  const location = useLocation(); // Get current route
 
   useEffect(() => {
     localStorage.setItem('sidebar-collapsed', isCollapsed); // Save collapsed state to localStorage
   }, [isCollapsed]);
+
+  useEffect(() => {
+    // Fetch the logged-in user data
+    const fetchUserData = async () => {
+      try {
+        const response = await fetchLoggedInUser(); // Fetch the user data from API
+        setUser(response.data);
+      } catch (error) {
+        console.error('Failed to fetch user data:', error);
+      }
+    };
+
+    fetchUserData();
+  }, []);
+
+  const handleLogout = () => {
+    // Implement logout logic here
+    localStorage.removeItem('token');
+    navigate('/login');
+  };
 
   const links = [
     { path: '/admin/dashboard', label: 'Dashboard' },
@@ -56,13 +93,21 @@ const AdminDashboard = () => {
     <FaUser key="user" />,
     <FaBuilding key="building" />,
     <FaChartLine key="chart" />,
-    <MdSettings key="settings" />,
+  ];
+
+  // Determine the active link based on the current path
+  const activeLink = links.find((link) => location.pathname.startsWith(link.path));
+  const logoText = activeLink ? activeLink.label : 'Admin';
+
+  const dropdownOptions = [
+    { label: 'Edit Profile', icon: <FiEdit />, onClick: () => navigate('/admin/profile') },
+    { label: 'Logout', icon: <FiLogOut />, onClick: handleLogout },
   ];
 
   return (
     <DashboardContainer>
       {/* Sidebar component with links, icons, and theme toggle */}
-      <FixedSidebar>
+      <FixedSidebar isCollapsed={isCollapsed}>
         <Sidebar
           links={links}
           icons={icons}
@@ -74,7 +119,21 @@ const AdminDashboard = () => {
         />
       </FixedSidebar>
       <Content isCollapsed={isCollapsed}>
-        <Outlet /> {/* This will render child routes like Users, Employees, etc. */}
+        {/* Navbar component */}
+        <Navbar
+          logoText={logoText}
+          avatarSrc={user?.profile_photo || DefaultAvatar} // Use user profile photo or fallback
+          defaultAvatar={DefaultAvatar} // Fallback avatar
+          dropdownOptions={dropdownOptions} // Dropdown options (Edit Profile, Logout)
+          transparent={true}
+          fixed={true} // Set to true to fix navbar at top
+          contentMarginLeft={isCollapsed ? '80px' : '250px'} // Pass marginLeft to align navbar correctly
+          navbarWidth={`calc(100% - ${isCollapsed ? '80px' : '250px'})`} // Set navbar width to exclude sidebar
+          height="50px" // Reduce the height
+        />
+        <ContentWrapper>
+          <Outlet /> {/* This will render child routes like Users, Employees, etc. */}
+        </ContentWrapper>
       </Content>
     </DashboardContainer>
   );

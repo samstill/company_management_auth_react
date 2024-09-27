@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   fetchUsers,
   createUser,
@@ -18,11 +19,7 @@ import AddUserForm from './AddUserForm';
 import DefaultAvatar from '../../../../assets/default_avatar.png'; // Adjust the path accordingly
 
 // Styled components
-const Title = styled.h2`
-  font-size: ${(props) => props.theme.typography.h2};
-  color: ${(props) => props.theme.colors.primary};
-  margin-bottom: 20px;
-`;
+
 
 const ActionButtonWrapper = styled.div`
   display: flex;
@@ -92,6 +89,7 @@ const Users = () => {
   const [selectedUserIds, setSelectedUserIds] = useState([]); // Selected users for deletion
   const [userCount, setUserCount] = useState(0);
   const [searchQuery, setSearchQuery] = useState(''); // Search query
+  const navigate = useNavigate();
 
   const isInitialMount = useRef(true); // To track if it's the component's first render
 
@@ -131,6 +129,11 @@ const Users = () => {
 
     fetchData();
   }, [searchQuery]);
+
+  const handleRowClick = (user) => {
+    // Navigate to user profile page with user ID
+    navigate(`profile/${user.id}`);
+  };
 
   const handleAddNewUser = () => {
     setOpenAddUserModal(true);
@@ -204,8 +207,6 @@ const Users = () => {
 
   return (
     <div>
-      <Title>Admin Dashboard - Users Overview</Title>
-
       {/* Chart Card */}
       <ChartCard>
         <CardContent>
@@ -233,6 +234,7 @@ const Users = () => {
         <DataTable
           columns={columns}
           data={users}
+          onRowClick={handleRowClick}
           onSelectionChange={handleSelectionChange}
           selectedRowIds={selectedUserIds} // Ensure DataTable accepts this prop
           onSearch={handleSearch}

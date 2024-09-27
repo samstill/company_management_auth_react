@@ -2,7 +2,7 @@ import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import Employees from './Employees';
 import EmployeePerformanceDashboard from './EmployeePerformanceDashboard';
-import EmployeeProfile from './EmployeeProfile';
+
 
 const EmployeeRoutes = () => {
     return (
