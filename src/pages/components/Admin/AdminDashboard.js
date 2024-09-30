@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Sidebar, Navbar } from '@harshitpadha/themes'; // Import Sidebar and Navbar components
 import { FaHome, FaUser, FaBuilding, FaChartLine } from 'react-icons/fa'; // Import icons
 import { FiLogOut, FiEdit } from 'react-icons/fi'; // Icons for logout and edit
@@ -7,6 +7,8 @@ import styled from 'styled-components';
 import { useTheme } from '@harshitpadha/themes'; // Import useTheme hook
 import DefaultAvatar from '../../../assets/default_avatar.png'; // Fallback avatar image
 import { fetchLoggedInUser } from '../../../api/admin'; // Import the API call to get current user info
+import { FaGear } from 'react-icons/fa6';
+import {AuthContext } from '@harshitpadha/auth'; // Import AuthContext
 
 // Styled components for layout
 const DashboardContainer = styled.div`
@@ -55,6 +57,7 @@ const AdminDashboard = () => {
   const [user, setUser] = useState(null); // State to store the logged-in user data
   const navigate = useNavigate(); // Hook for navigation
   const location = useLocation(); // Get current route
+  const { logoutUser } = useContext(AuthContext); // Access logoutUser function from AuthContext
 
   useEffect(() => {
     localStorage.setItem('sidebar-collapsed', isCollapsed); // Save collapsed state to localStorage
@@ -75,9 +78,8 @@ const AdminDashboard = () => {
   }, []);
 
   const handleLogout = () => {
-    // Implement logout logic here
-    localStorage.removeItem('token');
-    navigate('/login');
+    logoutUser(); // Use the logout function from AuthContext
+    navigate('/login'); // Navigate to the login page after logout
   };
 
   const links = [
@@ -93,6 +95,7 @@ const AdminDashboard = () => {
     <FaUser key="user" />,
     <FaBuilding key="building" />,
     <FaChartLine key="chart" />,
+    <FaGear key="settings" />,
   ];
 
   // Determine the active link based on the current path
@@ -100,7 +103,7 @@ const AdminDashboard = () => {
   const logoText = activeLink ? activeLink.label : 'Admin';
 
   const dropdownOptions = [
-    { label: 'Edit Profile', icon: <FiEdit />, onClick: () => navigate('/admin/profile') },
+    { label: 'Edit Profile', icon: <FiEdit />, onClick: () => navigate('/admin/users/profile') },
     { label: 'Logout', icon: <FiLogOut />, onClick: handleLogout },
   ];
 
